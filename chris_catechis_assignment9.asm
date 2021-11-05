@@ -62,11 +62,23 @@ main:
 
 		sw $t3, totalCents  # save current sum to variable
 
-
-
 	# Convert dollars to cents and add to cent total
+	lw $t0, totalDollars
+	lw $t1, totalCents
+
+	add $t1, $t0, $t1  # t1 += $t0
+
+	sw $t1, totalCents  # store t1->totalCents
+
 	# Calculate dollars and cents using division on the cent total
+	li $t0, 100  # load 100 for division
+
+	div $t2, $t1, $t0  # answer in $t2
+	rem $t3, $t1, $t0  # answer in $t3
+	
 	# Store results in totalDollars and totalCents
+	sw $t2, totalDollars  # store t2->totalDollars
+	sw $t2, totalCents # store t3->totalCents
 
 	# Print Total Amount
 	li $v0, SYSTEM_PRINT_STRING
