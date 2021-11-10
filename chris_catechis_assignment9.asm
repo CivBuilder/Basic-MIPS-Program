@@ -1,6 +1,6 @@
 # Author: Christopher Catechis <8000945777>
 # Section: 1001
-# Date Last Modified: 11/5/2021
+# Date Last Modified: 11/9/2021
 # Program Description: Creates a simple MIPS program that will utilize arrays
 # and arithmetic operations.
 
@@ -35,50 +35,49 @@ main:
 
 	# Add together dollar and cent values from the provided arrays
 	la $t0, dollarAmounts  # dollars starting address
-	la $t1, centAmounts  # cents starting address
-	lw $t2, COUNT  # index
-	li $t3, 0  # sum
+	li $s0, COUNT  # index
+	li $t1, 0  # sum
 
 	sumDollarLoop:
-		lw $t4, ($t0)  # retrive dollarAmounts(n)
-		add $t3, $t3, $t4  # sum + dollaramounts(n)
-		addu $t0, $t0, 4  # dollarAmounts(n++)
-		sub $t2, $t2, 1  # index--
-		bnez $t2, sumDollarLoop
+		lw $t2, ($t0)  # retrive dollarAmounts(n)
+		add $t1, $t1, $t2  # sum += dollaramounts(n)
+		add $t0, $t0, 4  # dollarAmounts(n++)
+		sub $s0, $s0, 1  # index--
+		bnez $s0, sumDollarLoop
 
-		sw $t3, totalDollars  # save current sum to variable
+		sw $t1, totalDollars  # save current sum to variable
+
+	# reset some registers
+	la $t0, centAmounts  # cents starting address
+	li $s0, COUNT  # index
+	li $t1, 0  # sum
 	
 	sumCentLoop:
-		# reset some registers
-		lw $t2, COUNT  # index
-		li $t3, 0  # sum
-
 		# loop body
-		lw $t4, ($t1)  # retrive centAmounts(n)
-		add $t3, $t3, $t4  # sum + centAmounts(n)
-		addu $t1, $t1, 4  # centAmounts(n++)
-		sub $t2, $t2, 1  # index--
-		bnez $t2, sumCentLoop
+		lw $t2, ($t0)  # retrive centAmounts(n)
+		add $t1, $t1, $t2  # sum += centAmounts(n)
+		add $t0, $t0, 4  # centAmounts(n++)
+		sub $s0, $s0, 1  # index--
+		bnez $s0, sumCentLoop
 
-		sw $t3, totalCents  # save current sum to variable
+		sw $t1, totalCents  # save current sum to variable
 
 	# Convert dollars to cents and add to cent total
 	lw $t0, totalDollars
 	lw $t1, totalCents
+	li $t2, 100  # load 100 for division/addition
 
+    mul $t0, $t0, $t2
 	add $t1, $t0, $t1  # t1 += $t0
 
-	sw $t1, totalCents  # store t1->totalCents
-
 	# Calculate dollars and cents using division on the cent total
-	li $t0, 100  # load 100 for division
 
-	div $t2, $t1, $t0  # answer in $t2
-	rem $t3, $t1, $t0  # answer in $t3
+	div $t3, $t1, $t2  # answer in $t3
+	rem $t4, $t1, $t2  # answer in $t4
 	
 	# Store results in totalDollars and totalCents
-	sw $t2, totalDollars  # store t2->totalDollars
-	sw $t2, totalCents # store t3->totalCents
+	sw $t3, totalDollars  # store t3->totalDollars
+	sw $t4, totalCents # store t4->totalCents
 
 	# Print Total Amount
 	li $v0, SYSTEM_PRINT_STRING
